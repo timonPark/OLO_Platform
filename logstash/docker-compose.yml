@@ -1,0 +1,21 @@
+# OLO/logstash/docker-compose.yml
+version: '3'
+services:
+  logstash:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logstash
+    environment:
+      - OPENSEARCH_HOST=opensearch-node1:9200
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+    volumes:
+      - ./pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5044:5044"  # Filebeat가 로그를 전송할 포트
+    networks:
+      - opensearch-net
+
+networks:
+  opensearch-net:
+    external: true

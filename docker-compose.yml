@@ -1,0 +1,58 @@
+version: '3'
+services:
+  opensearch-node1:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch-node1
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - OPENSEARCH_SSL_ENABLED=true  # SSL 사용 설정
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+    volumes:
+      - ./opensearch-data1:/usr/share/opensearch/data
+      - ./certs:/certs  # 인증서 폴더를 /certs에 마운트
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - opensearch-net
+
+  opensearch-node2:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch-node2
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node2
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - OPENSEARCH_SSL_ENABLED=true  # SSL 사용 설정
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+    volumes:
+      - ./opensearch-data2:/usr/share/opensearch/data
+      - ./certs:/certs  # 인증서 폴더를 /certs에 마운트
+    networks:
+      - opensearch-net
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    environment:
+      - OPENSEARCH_HOSTS=https://opensearch-node1:9200  # SSL 적용한 OpenSearch의 URL
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+      - OPENSEARCH_SSL_VERIFICATIONMODE=none  # SSL 인증서 검증을 비활성화 (개발/테스트 환경에서만)
+    ports:
+      - 5601:5601
+    expose:
+      - '5601'
+    networks:
+      - opensearch-net
+
+networks:
+  opensearch-net:
+    name: opensearch-net
+    driver: bridge
+

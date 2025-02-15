@@ -1,0 +1,23 @@
+# opensearch.yml
+
+# 기본 OpenSearch 설정들 (클러스터 등)
+cluster.name: opensearch-cluster
+node.name: node-1
+discovery.seed_hosts: ["opensearch-node1", "opensearch-node2"]
+cluster.initial_cluster_manager_nodes: ["opensearch-node1", "opensearch-node2"]
+bootstrap.memory_lock: true
+
+# SSL 설정
+opensearch.ssl.enabled: true  # SSL 사용 설정
+opensearch.ssl.certificates.pem: /certs/my-cert.crt  # SSL 인증서 경로
+opensearch.ssl.key.pem: /certs/my-cert.key  # SSL 개인 키 경로
+
+# 노드 간의 통신에도 SSL을 사용하려면
+opensearch.ssl.verificationMode: certificate  # 노드 간 SSL 인증서 검증
+opensearch.network.host: _site_
+
+# 보안 관련 설정 비활성화 (보안 플러그인 초기화 문제 해결을 위해)
+plugins.security.disabled: true
+
+# 기타 OpenSearch 설정들...
+
