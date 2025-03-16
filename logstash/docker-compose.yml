@@ -14,8 +14,8 @@ services:
     ports:
       - "5044:5044"  # Filebeat가 로그를 전송할 포트
     networks:
-      - opensearch-net
+      - olo_platform_opensearch-net
 
 networks:
-  opensearch-net:
+  olo_platform_opensearch-net:
     external: true
